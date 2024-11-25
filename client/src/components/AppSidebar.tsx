@@ -43,10 +43,10 @@ const items = [
 export function AppSidebar() {
   return (
     <Sidebar>
-      <SidebarContent className="">
+      <SidebarContent className="bg-background border-none">
         <SidebarGroup>
-          <SidebarGroupLabel className="">Application</SidebarGroupLabel>
-          <SidebarGroupContent className="">
+          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
