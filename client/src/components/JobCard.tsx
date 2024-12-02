@@ -1,4 +1,4 @@
-import React, { createElement, useEffect, useState } from "react";
+import { createElement, useEffect, useState, FC } from "react";
 import { Plus, MoreVertical, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
@@ -36,7 +36,7 @@ interface StepCardProps {
   stepNumber: number;
 }
 
-const StepCard: React.FC<StepCardProps> = ({ data, showPlus, addStep, stepNumber }) => {
+const StepCard: FC<StepCardProps> = ({ data, showPlus, addStep, stepNumber }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleCardClick = () => {

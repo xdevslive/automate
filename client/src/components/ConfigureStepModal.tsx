@@ -1,5 +1,5 @@
 import { useState, useEffect, createElement } from "react";
-import { Check, ChevronRight, Mail, Zap } from "lucide-react";
+import { Check, ChevronRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
