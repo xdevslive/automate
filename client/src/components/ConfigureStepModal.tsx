@@ -20,6 +20,7 @@ interface ConfigureStepModalProps {
   title: string;
   trigger: boolean;
   stepNumber: number;
+  workflowId: string;
 }
 
 export function ConfigureStepModal({
@@ -27,7 +28,8 @@ export function ConfigureStepModal({
   onClose,
   title,
   trigger,
-  stepNumber
+  stepNumber,
+  workflowId,
 }: ConfigureStepModalProps) {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
