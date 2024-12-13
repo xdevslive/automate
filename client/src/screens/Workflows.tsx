@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Code,
   FileText,
@@ -50,12 +48,10 @@ export default function ZapsInterface() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [workflowData, setWorkflowData] = useState([]);
-  // const [pageSize, setPageSize] = useState(null);
 
   useEffect(() => {
-    if (userStateLoading === true) {
-      return;
-    }
+    if (userStateLoading) return;
+
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -64,7 +60,7 @@ export default function ZapsInterface() {
           {
             method: "GET",
             headers: {
-              Autherisation: `Bearer ${user?.token}`,
+              Authorization: `Bearer ${user?.token}`,
             },
           }
         );
@@ -78,7 +74,7 @@ export default function ZapsInterface() {
           });
         }
       } catch (err: any) {
-        console.log(err);
+        console.error(err);
         toast({
           title: "Error",
           description: "An unexpected error happened.",
@@ -87,6 +83,7 @@ export default function ZapsInterface() {
         setLoading(false);
       }
     };
+
     fetchData();
   }, [userStateLoading]);
 
@@ -162,50 +159,69 @@ export default function ZapsInterface() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {workflowData.map((workflow: any) => (
-            <TableRow key={workflow.id} className="align-middle">
-              <TableCell className="p-0">
-                <div className="flex flex-row gap-1">
-                  <Lightning className="h-4 w-4 text-muted-foreground" />
-                  <span className="hover:text-purple-900 cursor-pointer hover:underline">
-                    {workflow.name}
-                  </span>
+          {loading || userStateLoading ? ( // Show loader if loading or user state is loading
+            <TableRow>
+              <TableCell colSpan={5} className="text-center p-4">
+                <div className="flex justify-center items-center">
+                  <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-purple-600"></div>
+                  <span className="ml-3">Loading...</span>
                 </div>
-              </TableCell>
-              <TableCell className="gap-0 p-0">
-                <div className="flex gap-1">
-                  {workflow.apps.map((app: string, index: number) => {
-                    const Icon: React.ComponentType<{ className?: string }> =
-                      Mail;
-                    return (
-                      <div
-                        key={index}
-                        className="flex h-6 w-6 items-center justify-center rounded border bg-purple-100 dark:bg-gray-100 dark:text-purple-700"
-                      >
-                        <Icon className="h-4 w-4" />
-                      </div>
-                    );
-                  })}
-                </div>
-              </TableCell>
-
-              <TableCell className="gap-0 p-0">{workflow.updated_at}</TableCell>
-              <TableCell className="gap-0 p-0">
-                <Switch
-                  onCheckedChange={() => {
-                    console.log("toggle swith");
-                  }}
-                  className="data-[state=checked]:bg-purple-400 data-[state=unchecked]:bg-gray-200"
-                />
-              </TableCell>
-
-              <TableCell className="gap-0 p-0">
-                <Button variant="ghost" size="icon">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
               </TableCell>
             </TableRow>
-          ))}
+          ) : workflowData.length > 0 ? (
+            workflowData.map((workflow: any) => (
+              <TableRow key={workflow.id} className="align-middle">
+                <TableCell className="p-0">
+                  <div className="flex flex-row gap-1">
+                    <Lightning className="h-4 w-4 text-muted-foreground" />
+                    <span className="hover:text-purple-900 cursor-pointer hover:underline">
+                      {workflow.name}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell className="gap-0 p-0">
+                  <div className="flex gap-1">
+                    {workflow.apps.map((app: string, index: number) => {
+                      const Icon: React.ComponentType<{ className?: string }> =
+                        Mail;
+                      return (
+                        <div
+                          key={index}
+                          className="flex h-6 w-6 items-center justify-center rounded border bg-purple-100 dark:bg-gray-100 dark:text-purple-700"
+                        >
+                          <Icon className="h-4 w-4" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </TableCell>
+
+                <TableCell className="gap-0 p-0">
+                  {workflow.updated_at}
+                </TableCell>
+                <TableCell className="gap-0 p-0">
+                  <Switch
+                    onCheckedChange={() => {
+                      console.log("toggle switch");
+                    }}
+                    className="data-[state=checked]:bg-purple-400 data-[state=unchecked]:bg-gray-200"
+                  />
+                </TableCell>
+
+                <TableCell className="gap-0 p-0">
+                  <Button variant="ghost" size="icon">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={5} className="text-center p-4">
+                No data available.
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </div>
