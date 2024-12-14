@@ -34,6 +34,7 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useUser } from "@/providers/user-provider";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 // Custom purple theme
 const purpleTheme = {
@@ -48,10 +49,10 @@ export default function ZapsInterface() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [workflowData, setWorkflowData] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (userStateLoading) return;
-
+    if (userStateLoading || !user?.token) return;
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -66,6 +67,7 @@ export default function ZapsInterface() {
         );
         const data = await res.json();
         if (data.success) {
+          console.log(data.data);
           setWorkflowData(data.data);
         } else {
           toast({
@@ -86,6 +88,40 @@ export default function ZapsInterface() {
 
     fetchData();
   }, [userStateLoading]);
+
+  const handleCreateNewWorkflow = async () => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/workflow/new`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${user?.token}`,
+          },
+        }
+      );
+      if (!res.ok) {
+        throw new Error("Error fetching workflows.");
+      }
+      const data = await res.json();
+      console.log(data);
+      if (data.success) {
+        navigate(data.workflowData.id);
+      }
+    } catch (err: any) {
+      console.log(err);
+      toast({
+        title: "Error",
+        description: err.message ?? "An unexpected error happened.",
+      });
+    }
+  };
+
+  const convertDate = (date: string): string => {
+    const d = new Date(date).toLocaleDateString();
+    const t = d.split("/");
+    return `${t[0]}-${t[1]}-${t[2]}`;
+  };
 
   return (
     <div className="p-6 dark:bg-neutral-800 min-h-full">
@@ -136,6 +172,7 @@ export default function ZapsInterface() {
           </Button>
           <Button
             className={cn("flex items-center gap-2", purpleTheme.primary)}
+            onClick={handleCreateNewWorkflow}
           >
             <Plus className="h-4 w-4" />
             Create
@@ -174,36 +211,44 @@ export default function ZapsInterface() {
                 <TableCell className="p-0">
                   <div className="flex flex-row gap-1">
                     <Lightning className="h-4 w-4 text-muted-foreground" />
-                    <span className="hover:text-purple-900 cursor-pointer hover:underline">
+                    <span
+                      className="hover:text-purple-900 cursor-pointer hover:underline"
+                      onClick={() => {
+                        navigate(workflow.id);
+                      }}
+                    >
                       {workflow.name}
                     </span>
                   </div>
                 </TableCell>
                 <TableCell className="gap-0 p-0">
                   <div className="flex gap-1">
-                    {workflow.apps.map((app: string, index: number) => {
-                      const Icon: React.ComponentType<{ className?: string }> =
-                        Mail;
-                      return (
-                        <div
-                          key={index}
-                          className="flex h-6 w-6 items-center justify-center rounded border bg-purple-100 dark:bg-gray-100 dark:text-purple-700"
-                        >
-                          <Icon className="h-4 w-4" />
-                        </div>
-                      );
-                    })}
+                    {workflow.apps.length == 0
+                      ? "Not Configured"
+                      : workflow.apps.map((app: string, index: number) => {
+                          const Icon: React.ComponentType<{
+                            className?: string;
+                          }> = Mail;
+                          return (
+                            <div
+                              key={index}
+                              className="flex h-6 w-6 items-center justify-center rounded border bg-purple-100 dark:bg-gray-100 dark:text-purple-700"
+                            >
+                              <Icon className="h-4 w-4" />
+                            </div>
+                          );
+                        })}
                   </div>
                 </TableCell>
-
                 <TableCell className="gap-0 p-0">
-                  {workflow.updated_at}
+                  {convertDate(workflow.updated_at as string)}
                 </TableCell>
                 <TableCell className="gap-0 p-0">
                   <Switch
                     onCheckedChange={() => {
                       console.log("toggle switch");
                     }}
+                    checked={workflow.active}
                     className="data-[state=checked]:bg-purple-400 data-[state=unchecked]:bg-gray-200"
                   />
                 </TableCell>
