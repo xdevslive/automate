@@ -44,7 +44,7 @@ const purpleTheme = {
   border: "border-purple-200",
 };
 
-export default function ZapsInterface() {
+export default function Workflows() {
   const { user, userStateLoading } = useUser();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
