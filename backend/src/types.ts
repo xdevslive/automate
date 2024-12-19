@@ -1,3 +1,5 @@
+// moved the logic to schema.
+
 // export type Apps = "http" | "webhook" | "schedule";
 
 // export type JobType = "action" | "trigger";
