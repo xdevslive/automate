@@ -1,0 +1,9 @@
+{
+  "name": "Automate",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "extensions": [
+    "Prisma.prisma",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-typescript-next"
+  ]
+}
