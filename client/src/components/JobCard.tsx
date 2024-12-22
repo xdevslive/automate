@@ -130,6 +130,7 @@ export function JobCard({ workflow }: JobCardProps) {
   const addStep = () => {
     setSteps((prevSteps) => {
       const newStepNumber = prevSteps.length + 1;
+      console.log("newStepNumber", newStepNumber);
       return [...prevSteps, createStep("action", newStepNumber)];
     });
   };
