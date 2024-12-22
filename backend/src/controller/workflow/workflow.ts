@@ -230,6 +230,7 @@ export const getWorkflowDataController = async (
   }
 };
 
+// PUT /api/workflow/:id
 export const updateWorkflowController = async (
   req: Request,
   res: Response
@@ -237,17 +238,20 @@ export const updateWorkflowController = async (
   const id = req.params.id;
   const userId = req.user?.id;
 
+  console.log(req.body);
+
   if (!userId) {
     res.status(403).json({ success: false, message: "Unauthorized" });
     return;
   }
 
   try {
-    console.log(req.body);
+    console.log(req.body.jobs[0].data);
+    console.log(req.body.jobs[1].data);
     const parsedBody = WorkflowCreateSchema.safeParse(req.body);
     if (!parsedBody.success) {
       res.status(400).json({ success: false, message: "Invalid request data" });
-      console.log(parsedBody.error.issues);
+      console.log(parsedBody.error.issues[0]);
       return;
     }
     const { name, description, jobs } = parsedBody.data;
@@ -259,7 +263,7 @@ export const updateWorkflowController = async (
           owner_id: userId,
         },
         data: {
-          name: parsedBody.data?.name,
+          name: name,
           description: description,
           updated_at: new Date(),
         },
@@ -319,7 +323,7 @@ export const updateWorkflowController = async (
       });
     });
 
-    const safeData = WorkflowCreateSchema.parse(data);
+    const safeData = WorkflowResponseSchema.parse(data);
 
     res.status(200).json({
       success: true,

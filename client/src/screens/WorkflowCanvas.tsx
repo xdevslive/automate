@@ -3,7 +3,6 @@ import { JobCard } from "../components/JobCard";
 import { TopBar } from "../components/Topbar";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
-import { updateWorkflow } from "@/store/slice/workflow";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/providers/user-provider";
 import { updateActiveWorkflow } from "@/store/slice/workflow/workflowState";
@@ -121,13 +120,14 @@ export function WorkflowCanvas() {
 
   const updateWorkflowData = async () => {
     try {
-      console.log(workflow);
+      console.log("workflow::", workflow);
       const res = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/api/workflow/${workflowId}`,
         {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${user?.token}`,
+            "content-type": "application/json",
           },
           body: JSON.stringify(workflow),
         }
@@ -139,7 +139,8 @@ export function WorkflowCanvas() {
       if (!data.success) {
         return;
       }
-      dispatch(updateWorkflow(data.data));
+      console.log(data);
+      dispatch(updateActiveWorkflow(data.data));
     } catch (e: any) {
       console.log(e);
     }
