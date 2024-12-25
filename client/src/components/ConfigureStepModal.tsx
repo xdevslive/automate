@@ -73,9 +73,10 @@ export function ConfigureStepModal({
   };
 
   useEffect(() => {
-    if (!activeWorkflow) {
+    if (!activeWorkflow || activeWorkflow.jobs.length == 0) {
       return;
     }
+    console.log(activeWorkflow.jobs);
     const currentJob = activeWorkflow.jobs[stepNumber - 1];
     const j = JobCongiguration.filter((jc) => jc.app === currentJob.app)[0];
     setCurrentJob(currentJob);
