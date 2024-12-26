@@ -147,8 +147,16 @@ export function WorkflowCanvas() {
       }
       console.log(data);
       dispatch(updateActiveWorkflow(data.data));
+      toast({
+        title: "Success",
+        description: "Your workflow has been saved successfully.",
+      });
     } catch (e: any) {
       console.log(e);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+      });
     }
   };
 
